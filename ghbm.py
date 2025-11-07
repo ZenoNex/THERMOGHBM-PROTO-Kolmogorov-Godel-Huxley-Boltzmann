@@ -1,4 +1,23 @@
-# ghbm.py
+"""
+Kolmogorov-Godel-Huxley-Boltzmann Model (GHBM) - PyTorch Implementation
+
+System Design Rationale:
+- Use of PyTorch nn.Module: Provides familiar deep learning abstractions, easy integration with transformers or other models.
+- Stochastic Forward Pass: Models physical (thermodynamic/quantum-inspired) stochasticity by simulating an ensemble of perturbed states. Improves generalization, robustness, and mimics real-world uncertainty.
+- Ensemble Size (default 8): Balances computational cost with statistical significance; enough samples for a meaningful mean/std with minimal overhead.
+- GRU RNN for Virtual Time Evolution: Captures temporal dependencies and pseudo-dynamical behaviors; GRUs are efficient and have low vanishing gradient issues compared to vanilla RNNs.
+- Projection Layer: Linear layer serves as an abstraction for Huxley-Boltzmann-like projection; integrates thermodynamic and neural representations.
+- Attenuation via Weighted Average: Uses an analog of Boltzmann/Gibbs weighting to reduce outlier influence, stabilize predictions, and simulate generative soft-max behavior.
+- Modular Design: Enables drop-in replacement for transformer layers (see train_ghbm.py), facilitating experimentation and comparability.
+
+CUDA Extension Choice:
+- Custom CUDA code for thermodynamic kernels enables high-performance simulation and hardware integration (see corresponding .cu/.cpp/.c).
+- extra_cuda_cflags O3: Enables aggressive optimization for real-time or large scale usage.
+
+Where applicable, consult ghbm.py, thermo_cuda.cu, thermo_driver.c, and thermo_lib.cpp for corresponding rationales.
+
+"""
+
 import torch
 import torch.nn as nn
 from torch.utils.cpp_extension import load
