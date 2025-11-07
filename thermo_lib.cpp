@@ -1,4 +1,18 @@
-// thermo_lib.cpp
+/*
+thermo_lib.cpp: User-space CUDA Interface for Thermodynamic AI Integration
+
+Design Choices & Rationale:
+- Accesses /dev/thermo0: Direct connection between ML system and real-time hardware measurements (temperature, voltage, jitter, ADC noise).
+- Uses CUDA allocation and kernel invocation: Enables manipulation of latent states and noise directly on GPU for maximum efficiency.
+- Structure mirrors ML model dimensions: N (hidden size), ensemble_size, etc, to seamlessly connect hardware observations to ensemble perturbations.
+- Separation of poll_hardware and step_ghbm: Clear distinction between hardware IO and machine learning state evolution.
+- Exception handling for hardware access: Ensures reliability, alerts user to hardware issues.
+- All allocations/deallocations handled in constructor/destructor: RAII pattern improves memory safety and reliability.
+- Modular design invites extension or adaptation for additional hardware features or algorithms.
+
+The file acts as a bridge between kernel driver (thermo_driver.c), CUDA kernels (thermo_cuda.cu), and high-level ML code (ghbm.py, train_ghbm.py).
+*/
+
 #include <cuda_runtime.h>
 #include <fcntl.h>
 #include <unistd.h>
