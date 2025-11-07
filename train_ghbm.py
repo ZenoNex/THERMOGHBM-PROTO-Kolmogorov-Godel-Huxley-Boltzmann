@@ -1,4 +1,19 @@
-# train_ghbm.py
+"""
+train_ghbm.py: Fine-tuning GPT-2 with Thermodynamic GHBM Replacements
+
+Design Choices & Rationale:
+- Fine-tuning pre-trained GPT2: Leverages existing linguistic priors, improving convergence and sample efficiency.
+- Replacing selected MLP projection layers (c_proj): Integrates GHBM stochastic/thermodynamic behavior within critical generative pathways. Chosen layers ([3, 5, 7]) inject physical noise at multiple depths for robustness.
+- KolmogorovGHBM Model: Implements ensemble, virtual time, and Boltzmann attenuation to diversify activations during training and inference (see ghbm.py for detailed rationale).
+- AdamW optimizer: Standard for transformer-based models. Handles sparse updates and adapts well to noisy gradients.
+- Loss function and training loop: Follows standard language modeling, simulating realistic generative tasks.
+- On-the-fly text example: Encourages generative exploration and assesses model stability.
+- Use of tokenizer.pad_token: GPT2's default behavior uses eos as pad, maintaining compatibility with Huggingface standards.
+
+This script demonstrates how to inject thermodynamic principles into modern neural language models for research on physically-aware deep learning.
+
+"""
+
 import torch
 import torch.nn.functional as F
 from transformers import GPT2Tokenizer, GPT2LMHeadModel
