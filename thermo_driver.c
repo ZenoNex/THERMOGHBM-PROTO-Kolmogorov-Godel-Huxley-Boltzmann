@@ -1,4 +1,19 @@
-// thermo_driver.c
+/*
+thermo_driver.c: Linux Kernel Module for Thermodynamic AI Hardware Integration
+
+Design Choices & Rationale:
+- Linux char device driver: Enables access to thermodynamic/noise/jitter sensors on GPU in a way that's easy to consume from user space and other languages.
+- NVIDIA NVML/ROCM hooks (simulated here): Intended to access real-time measurements on GPU temperature, voltage, jitter, and ADC noise; critical to tie stochastic ensembles to actual device state for physically-grounded ML.
+- Structure thermo_sample: Captures all the relevant physical info for statistical modeling and ensemble perturbation.
+- Simulated loop for A100's ~108 SMs: Provides a realistic basis for scaling to contemporary hardware.
+- Uses ktime_get_ns for timestamping: Accurate time measurements enable sequence correlation with ML procedures.
+- Modular open/read/close routines: Facilitates easy integration, robustness, and safe resource allocation. Follows kernel best practices.
+- MIT license: Chosen for permissive use and research/industry adoption.
+
+This driver is intended to be consumed by CUDA/C++/Python routines (thermo_lib.cpp, ghbm.py), thus making the ML system physically aware and hardware-adaptive.
+
+*/
+
 #include <linux/module.h>
 #include <linux/fs.h>
 #include <linux/device.h>
