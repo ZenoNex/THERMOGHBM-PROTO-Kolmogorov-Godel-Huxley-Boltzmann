@@ -1,4 +1,19 @@
-// thermo_cuda.cu
+/*
+thermo_cuda.cu: CUDA Kernels for Thermodynamic GHBM Model
+
+Design Choices & Rationale:
+- Custom CUDA Kernels: To achieve real-time simulation of stochastic processes, physical device-driven noise, and thermodynamic/statistical sampling.
+- Ensemble, Virtual Time Evolution, Boltzmann Sampling: Directly implements theoretical aspects of Kolmogorov-Godel-Huxley-Boltzmann blending, including noise injection and physical attenuation.
+- TAU_VTE and BOLTZMANN_KT_SCALE Constants: Parameterize decay and thermal noise scaling, reflecting physical realities and allowing for hardware-driven experimentation.
+- curand Usage: Hardware random sources improve stochastic modeling over software-only sources.
+- atomicAddFloat: Needed for atomic updates in single-precision; type-casting relates to CUDA's atomic limitations and ensures safe parallel reductions.
+- All kernels parallelized across elements for massive parallel efficiency.
+- generative_attenuation: Simulates uncertainty attenuation by simulated Boltzmann weighting, robustly aggregates ensemble predictions.
+- Interoperability with hardware driver via "thermo_driver.h": Enables real-time feedback from device sensors, allowing closed-loop integration with physical GPU environment.
+
+The file provides the computational backbone for the Python and C++ interface (ghbm.py, thermo_lib.cpp).
+*/
+
 #include <cuda_runtime.h>
 #include <curand_kernel.h>
 #include <math.h>
