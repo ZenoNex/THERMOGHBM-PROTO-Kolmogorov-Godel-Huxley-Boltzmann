@@ -54,7 +54,7 @@ This isn't a bug. It's the **feature**.
 
 ## Architecture Flow
 
-```
+
 Input → [Kolmogorov Stochastic Layer]
             ↑ (ADC + Jitter + Leakage)
             ↓
